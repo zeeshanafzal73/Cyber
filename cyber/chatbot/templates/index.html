@@ -27,6 +27,19 @@
             </ul>
         </div>
     </div>
+    {% for question in random_questions %}
+    <div id="predefined-questions-container" class="predefined-questions text-center mb-2 col-lg-12">
+        <div class="grid-container">
+
+            <button class="predefined-question-btn" data-question={{question}}>{{ question.question }}
+            </button>
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+
 
 </body>
 </html>
+
