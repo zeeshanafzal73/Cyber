@@ -29,11 +29,11 @@
     </style>
 </head>
 <body>
-<!-- Login 2 - Bootstrap Brain Component -->
+<!-- Login  - Bootstrap Brain Component -->
 <div class="bg-light py-3 py-md-5">
     <div class="container">
         <div class="row justify-content-md-center">
-            <div class="col-12 col-md-11 col-lg-8 col-xl-5 col-xxl-6">
+            <div class="col-12 col-md-11 col-lg-8 col-xl-5 col-xxl-4">
                 <div class="bg-white p-4 p-md-5 rounded shadow-sm">
                     <div class="row">
                         <div class="col-12">
@@ -42,19 +42,19 @@
                             </div>
                         </div>
                     </div>
-                    <form action="{% url 'cyberapp:login' %}" method="POST">
+                    <form action="{% url 'cyberapp:change_password' %}" method="POST">
                         {% csrf_token %}
                         <div class="row gy-3 gy-md-4 overflow-hidden">
                             <div class="col-12">
-                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" name="email" id="email"
-                                       placeholder="name@example.com" value="{{ form.username.value }}" required>
+                                <label for="username" class="form-label">Username<span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="username" id="username"
+                                       placeholder="name@example.com" required>
                             </div>
                             <div class="col-12">
                                 <label for="password" class="form-label">Password <span
                                         class="text-danger">*</span></label>
                                 <input type="password" class="form-control" name="password" id="password"
-                                       value="{{ form.password.value }}"
                                        required>
                             </div>
                             <div class="col-12">
@@ -74,7 +74,7 @@
                                 <a href="{% url 'cyberapp:signup' %}" class="link-secondary text-decoration-none">Create
                                     new
                                     account</a>
-                                <a href="{% url 'cyberapp:forget_password' %}"
+                                <a href="{% url 'cyberapp:forgot_password' %}"
                                    class="link-secondary text-decoration-none">Forgot password</a>
                             </div>
                         </div>
@@ -83,5 +83,6 @@
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>

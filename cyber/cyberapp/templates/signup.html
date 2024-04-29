@@ -32,7 +32,7 @@
 <div class="bg-light py-3 py-md-5">
     <div class="container">
         <div class="row justify-content-md-center">
-            <div class="col-12 col-md-11 col-lg-8 col-xl-5 col-xxl-6">
+            <div class="col-12 col-md-11 col-lg-8 col-xl-5 col-xxl-5">
                 <div class="bg-white p-4 p-md-5 rounded shadow-sm">
                     <div class="row">
                         <div class="col-12">
@@ -63,6 +63,12 @@
                                        placeholder="last name" required>
                             </div>
                             <div class="col-12">
+                                <label for="email" class="form-label">Email <span
+                                        class="text-danger">*</span></label>
+                                <input type="email" class="form-control" name="email" id="email"
+                                       placeholder="email" required>
+                            </div>
+                            <div class="col-12">
                                 <label for="password1" class="form-label">Password <span
                                         class="text-danger">*</span></label>
                                 <input type="password" class="form-control" name="password1" id="password1" value=""
@@ -83,15 +89,6 @@
                             </div>
                         </div>
                     </form>
-                    <div class="row">
-                        <div class="col-12">
-                            <hr class="mt-4 mb-3 border-secondary-subtle">
-                            <div class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-end">
-                                <a href="{% url 'cyberapp:login' %}" class="link-secondary text-decoration-none">Login
-                                    account</a>
-                                <a href="{% url 'cyberapp:forget_password' %}"
-                                   class="link-secondary text-decoration-none">Forgot password</a>
-                            </div>
                         </div>
                     </div>
                 </div>

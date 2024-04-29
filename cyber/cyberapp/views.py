@@ -1,8 +1,10 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-
-from .forms import DocumentForm, SignupForm, LoginForm
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from .forms import DocumentForm, SignupForm, LoginForm, ChangePasswordForm
 
 
 # Create your views here.
@@ -12,7 +14,7 @@ def home(request):
 
 
 # login page
-def login(request):
+def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -20,31 +22,53 @@ def login(request):
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user:
+                print(user)
                 login(request, user)
-                return redirect('home')
+                return redirect('cyberapp:home_user')
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
 
 # signup page
-def signup(request):
+def user_signup(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')
+            return redirect('cyberapp:login')
     else:
         form = SignupForm()
     return render(request, 'signup.html', {'form': form})
 
 
+def change_password(request):
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('cyberapp:success')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'change_password.html', {
+        'form': form
+    })
+
+
+def success(request):
+    return render(request, 'success.html')
+
+
 def forget_password(request):
-    return render(request, 'forget_password.html')
+    return render(request, 'forgot_password.html')
 
 
 # logout page
-def logout(request):
+def user_logout(request):
     logout(request)
     return redirect('login')
 
