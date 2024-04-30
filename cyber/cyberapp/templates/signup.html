@@ -31,6 +31,11 @@
 <body>
 <div class="bg-light py-3 py-md-5">
     <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="text-center alert alert-success mb-3">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
         <div class="row justify-content-md-center">
             <div class="col-12 col-md-11 col-lg-8 col-xl-5 col-xxl-5">
                 <div class="bg-white p-4 p-md-5 rounded shadow-sm">
@@ -49,18 +54,6 @@
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control" name="username" id="username"
                                        placeholder="name@example.com" required>
-                            </div>
-                            <div class="col-12">
-                                <label for="first_name" class="form-label">First Name <span
-                                        class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="first_name" id="first_name"
-                                       placeholder="first name" required>
-                            </div>
-                            <div class="col-12">
-                                <label for="last_name" class="form-label">Last Name <span
-                                        class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="last_name" id="last_name"
-                                       placeholder="last name" required>
                             </div>
                             <div class="col-12">
                                 <label for="email" class="form-label">Email <span
@@ -89,12 +82,12 @@
                             </div>
                         </div>
                     </form>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>
 </body>
 </html>

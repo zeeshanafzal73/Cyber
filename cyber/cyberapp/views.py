@@ -1,10 +1,11 @@
-from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
-from .forms import DocumentForm, SignupForm, LoginForm, ChangePasswordForm
+from django.shortcuts import render, redirect
+
+from .forms import SignupForm, LoginForm, ChangePasswordForm
 
 
 # Create your views here.
@@ -22,7 +23,6 @@ def user_login(request):
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user:
-                print(user)
                 login(request, user)
                 return redirect('cyberapp:home_user')
     else:
@@ -73,14 +73,17 @@ def user_logout(request):
     return redirect('login')
 
 
-def upload_file(request):
-    if request.method == 'POST':
-        form = DocumentForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/success/')
-        else:
-            return render(request, 'upload_document.html', {'form': form})
-    else:
-        form = DocumentForm()
-    return render(request, 'upload_document.html', {'form': form})
+# @login_required
+# def upload_file(request):
+#     if request.method == 'POST':
+#         form = DocumentForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             document = form.save(commit=False)
+#             document.user = request.user
+#             document.save()
+#             messages.success(request, "PDF Uploaded")
+#         else:
+#             return render(request, 'upload_document.html', {'form': form})
+#     else:
+#         form = DocumentForm()
+#     return render(request, 'upload_document.html', {'form': form})
