@@ -42,7 +42,7 @@
                             </div>
                         </div>
                     </div>
-                    <form action="{% url 'cyberapp:change_password' %}" method="POST">
+                    <form action="{% url 'cyberapp:login' %}" method="POST">
                         {% csrf_token %}
                         <div class="row gy-3 gy-md-4 overflow-hidden">
                             <div class="col-12">
@@ -65,6 +65,11 @@
                                     </button>
                                 </div>
                             </div>
+                             {% if messages %}
+                                    {% for message in messages %}
+                                        <div class="text-center alert alert-success mb-3">{{ message }}</div>
+                                    {% endfor %}
+                                {% endif %}
                         </div>
                     </form>
                     <div class="row">

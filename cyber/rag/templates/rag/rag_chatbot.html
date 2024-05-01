@@ -33,32 +33,39 @@
 
         .chat-application {
             width: 100%;
-            max-width: 600px;
+            max-width: 100%;
             background-color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            border-radius: 0px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
-        {##5b36ac#}
+
         .chat-header {
-            background-color:#033e8c ;
-            color: white;
             padding: 20px;
             text-align: center;
             font-size: 1.2em;
+            width: 80%; /* Set the width to your desired value */
+            margin: 0 auto 0 140px; /* Center the div horizontally */
+            position: absolute; /* Position the div absolutely */
+            top: 40%; /* Position it at 50% from the top */
+            transform: translateY(-50%); /* Adjust for vertical centering */
+            z-index: 999;
         }
 
         .chat-container {
-            flex-grow: 1;
+            bottom: 0;
+            left: 0;
+            width: 100%;
             overflow-y: auto;
-            padding: 20px;
+            padding: 20px 0px 0px 100px;
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Center content when chat is empty */
+            justify-content: center;
             align-items: center;
-            min-height: 300px; /* Ensures a minimum height for the chat area */
+            min-height: 480px;
+
         }
 
         .typing-container {
@@ -66,7 +73,7 @@
             background-color: #f0f0f0;
             display: flex;
             border-top: 1px solid #ccc;
-            justify-content: center; /* Centering the input and send button */
+            justify-content: center;
         }
 
         .user-message {
@@ -81,6 +88,8 @@
             padding: 10px 10px;
             display: inline-block;
             max-width: 70%;
+            align-self: flex-end;
+            margin-left: auto;
         }
 
         .bot-message {
@@ -94,10 +103,10 @@
             border-radius: 20px;
             padding: 10px 20px;
             display: inline-block;
-            max-width: 70%;
+            max-width: 50%;
+            font-size: 1em;
         }
 
-        /* Feedback Button Styles */
         .feedback-buttons {
             display: inline-block;
             margin-left: 10px;
@@ -111,7 +120,7 @@
         }
 
         .feedback-button img {
-            width: 24px; /* Set appropriate size for the icons */
+            width: 24px;
             height: auto;
         }
 
@@ -120,7 +129,7 @@
         }
 
         #chat-input {
-            width: 80%;
+            width: 60%;
             border: 2px solid #ccc;
             padding: 10px;
             border-radius: 18px;
@@ -143,18 +152,25 @@
         /* Add responsiveness */
         @media (max-width: 600px) {
             .chat-application {
-                padding: 10px;
+                padding: 0px;
             }
 
             .chat-header, .typing-container {
                 padding: 10px;
             }
 
-            #chat-input, #send-btn {
+            #chat-input {
                 width: 100%; /* Adjust input and button width for smaller screens */
             }
-        }
 
+            .chat-container {
+                min-height: 300px; /* Adjust minimum height for smaller screens */
+            }
+
+            .user-bubble, .bot-bubble {
+                max-width: 90%; /* Adjust bubble width for smaller screens */
+            }
+        }
 
     </style>
 
@@ -163,49 +179,55 @@
             const chatLog = $('#chat-log');
             const userInput = $('#chat-input');
             const sendButton = $('#send-btn');
+            const initialHeader = $('.chat-header');
+
+            function hideInitialHeader() {
+                initialHeader.hide();
+            }
 
             function appendMessage(message, sender, emoji) {
+                message = message.replace(/true|false/g, '');
                 const senderClass = sender === 'User' ? 'user-message' : 'bot-message';
                 const bubbleClass = sender === 'User' ? 'user-bubble' : 'bot-bubble';
                 const emojiHTML = emoji ? `<span class="emoji">${emoji}</span>` : '';
-                const feedbackButtons = sender === 'Bot' ? '<div class="feedback-buttons"><button class="material-symbols-rounded thumbs-up-btn">👍</button><button class="material-symbols-rounded thumbs-down-btn">👎</button></div>' : '';
+                const feedbackButtons = sender === 'Bot';
                 const messageDiv = `
-                    <div class="${senderClass}">
-                        <div class="${bubbleClass}">
-                            ${emojiHTML}${message}
-                            ${feedbackButtons}
-                        </div>
-                    </div>
-                `;
+                            <div class="${senderClass}">
+                                <div class="${bubbleClass}">
+                                    ${emojiHTML}${message}
+                                </div>
+                            </div>
+                        `;
                 chatLog.append(messageDiv);
-                chatLog.scrollTop(chatLog[0].scrollHeight); // Scroll to the bottom of the chat log
+                chatLog.scrollTop(chatLog[0].scrollHeight);
             }
 
             function showThinkingIndicator() {
                 const thinkingMessage = '<div class="bot-message thinking-message"> <span class="emoji">🤔</span></div>';
                 chatLog.append(thinkingMessage);
-                chatLog.scrollTop(chatLog[0].scrollHeight); // Scroll to the bottom of the chat log
+                chatLog.scrollTop(chatLog[0].scrollHeight);
             }
 
             function handleUserInput() {
                 const userMessage = userInput.val();
-                appendMessage(userMessage, 'User', '👨🏻‍🦰');
-                userInput.val(''); // Clear the input field
-                showThinkingIndicator(); // Show thinking indicator
+                appendMessage(userMessage, 'User');
+                userInput.val('');
+                showThinkingIndicator();
+                hideInitialHeader();
                 $.ajax({
                     url: '/staffs/',
                     type: 'POST',
                     data: {question: userMessage, csrfmiddlewaretoken: '{{ csrf_token }}'},
                     success: function (data) {
                         const botMessage = data.response;
-                        appendMessage(botMessage, 'Bot', '🤖');
+                        appendMessage(botMessage, 'Bot');
                     },
                     error: function () {
                         const errorMessage = '<div class="bot-message" style="color: red; padding-bottom: 20px; font-size: 20px;">Error processing the request.</div>';
                         chatLog.append(errorMessage);
                     },
                     complete: function () {
-                        $('.thinking-message').remove(); // Remove thinking indicator
+                        $('.thinking-message').remove();
                     }
                 });
             }
@@ -213,22 +235,22 @@
             // Handling click events for predefined questions
             $('.predefined-question-btn').click(function () {
                 const question = $(this).data('question');
-                appendMessage(question, 'User', '👨🏻‍🦰');  // Append user's question to the chat log
-                showThinkingIndicator();  // Show thinking indicator
+                appendMessage(question, 'User');
+                showThinkingIndicator();
                 $.ajax({
                     url: '/staffs/',
                     type: 'POST',
                     data: {question: question, csrfmiddlewaretoken: '{{ csrf_token }}'},
                     success: function (data) {
                         const botMessage = data.response;
-                        appendMessage(botMessage, 'Bot', '🤖');  // Append bot's response to the chat log
+                        appendMessage(botMessage, 'Bot');  // Append bot's response to the chat log
                     },
                     error: function () {
                         const errorMessage = '<div class="bot-message" style="color: red; padding-bottom: 20px; font-size: 20px;">Error processing the request.</div>';
                         chatLog.append(errorMessage);
                     },
                     complete: function () {
-                        $('.thinking-message').remove();  // Remove thinking indicator
+                        $('.thinking-message').remove();
                     }
                 });
             });
@@ -240,54 +262,8 @@
             });
 
             sendButton.click(handleUserInput);
-
-            // Updated click events for thumbs up and down buttons
-            chatLog.on('click', '.thumbs-up-btn', function () {
-                toggleFeedbackButtons($(this));
-                sendFeedback(true);
-            });
-
-            chatLog.on('click', '.thumbs-down-btn', function () {
-                toggleFeedbackButtons($(this));
-                sendFeedback(false);
-            });
-
-            function toggleFeedbackButtons(clickedButton) {
-                const parentMessage = clickedButton.closest('.bot-message');
-                const feedbackButtons = parentMessage.find('.feedback-buttons button');
-
-                // Hide all buttons
-                feedbackButtons.hide();
-
-                // Show only the clicked button
-                clickedButton.show();
-
-                // Store the feedback value in a data attribute
-                parentMessage.data('is_positive', clickedButton.hasClass('thumbs-up-btn'));
-            }
-
-            function sendFeedback(isPositive) {
-                const is_positive = isPositive ? 'true' : 'false';
-
-                $.ajax({
-                    url: '/staffs/',
-                    type: 'POST',
-                    data: {
-                        is_positive: is_positive,
-                        question: $('#chat-log .user-message:last .user-bubble').text(),  // Add the user's question to the data
-                        csrfmiddlewaretoken: '{{ csrf_token }}'
-                    },
-                    success: function (data) {
-                        // Handle success if needed
-                        console.log('Feedback saved successfully');
-                    },
-                    error: function () {
-                        // Handle error if needed
-                        console.error('Error saving feedback');
-                    }
-                });
-            }
         });
+
     </script>
 
 {% endblock content %}

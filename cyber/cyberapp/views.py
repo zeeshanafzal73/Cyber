@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect
 
@@ -25,6 +24,10 @@ def user_login(request):
             if user:
                 login(request, user)
                 return redirect('cyberapp:home_user')
+            else:
+                messages.error(request, 'Invalid username or password.')
+        else:
+            messages.error(request, 'Please correct the error below.')
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
@@ -71,7 +74,6 @@ def forget_password(request):
 def user_logout(request):
     logout(request)
     return redirect('login')
-
 
 # @login_required
 # def upload_file(request):
