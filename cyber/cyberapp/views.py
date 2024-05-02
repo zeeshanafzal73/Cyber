@@ -3,7 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect
-
+from django.contrib.auth.models import User
+from django.http import JsonResponse
 from .forms import SignupForm, LoginForm, ChangePasswordForm
 
 
@@ -89,3 +90,23 @@ def user_logout(request):
 #     else:
 #         form = DocumentForm()
 #     return render(request, 'upload_document.html', {'form': form})
+
+
+def logged_in_users_chart(request):
+    # Retrieve data for logged-in users
+    logged_in_users = User.objects.filter(is_active=True, is_authenticated=True)
+    user_count = logged_in_users.count()
+
+    # Prepare data in a format suitable for Chart.js
+    chart_data = {
+        'labels': ['Currently Logged-in Users'],
+        'datasets': [{
+            'label': 'Total Users',
+            'data': [user_count],
+            'backgroundColor': 'rgba(255, 99, 132, 0.2)',
+            'borderColor': 'rgba(255, 99, 132, 1)',
+            'borderWidth': 1
+        }]
+    }
+
+    return JsonResponse(chart_data)
