@@ -158,20 +158,8 @@ JAZZMIN_SETTINGS = {
 
     # Links to put along the top menu
     "topmenu_links": [
-        # model admin to link to (Permissions checked against model)
-        {"model": "auth.User"},
-
-        # App with dropdown menu to all its models pages (Permissions checked against models)
-        {"app": "cyberapp"},
-    ],
-
-    #############
-    # User Menu #
-    #############
-
-    # Additional links to include in the user menu on the top right ("app" url type is not allowed)
-    "usermenu_links": [
-        {"model": "auth.user"}
+        {"name": "Graph", "url": "http://127.0.0.1:8000/users_chart/", "new_window": False},
+        # {"model": "auth.user"}
     ],
 
     #############

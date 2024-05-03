@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logged-in Employees Stat</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div>
+    <div class="container">
+        <div class="user-count">
+            <p>Employees Count: {{ user_data.logged_in_users }}</p>
+        </div>
+        <div class="staff-count">
+            <p>Staff Count : {{ user_data.staff_users }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="chart-container">
+            <canvas id="myBarChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="myPieChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .user-count {
+        display: inline-flex;
+        flex-direction: column;
+        background-color: #d1e7dd;
+        border: 1px solid #badbcc;
+        border-radius: 10px;
+        width: 20%;
+        text-align: center;
+        font-family: 'Poppins', 'Arial', sans-serif;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .staff-count {
+        display: inline-flex;
+        flex-direction: column;
+        background-color: #d1e7dd;
+        border: 1px solid #badbcc;
+        border-radius: 10px;
+        width: 20%;
+        text-align: center;
+        font-family: 'Poppins', 'Arial', sans-serif;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .container {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        padding-top: 20px;
+    }
+
+    .row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        padding-top: 50px;
+    }
+</style>
+
+<script>
+    const ctx = document.getElementById('myBarChart').getContext('2d');
+    const pieCtx = document.getElementById('myPieChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Employees', 'Staff'],
+            datasets: [{
+                label: 'Count Employees',
+                data: [{{ user_data.logged_in_users }}, {{ user_data.staff_users }}],
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            layout: {
+                padding: {
+                    left: 10, // Reduced left padding
+                    right: 10, // Reduced right padding
+                    top: 10, // Reduced top padding
+                    bottom: 10 // Reduced bottom padding
+                }
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: 1 // Set aspect ratio to adjust width and height
+        }
+    });
+
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Total Employees', 'Staff'],
+            datasets: [{
+                label: 'Count Employees',
+                data: [{{ user_data.logged_in_users }}, {{ user_data.staff_users }}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            layout: {
+                padding: {
+                    left: 100, // Reduced left padding
+                    right: 10, // Reduced right padding
+                    top: 10, // Reduced top padding
+                    bottom: 10 // Reduced bottom padding
+                }
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: 1 // Set aspect ratio to adjust width and height
+        }
+    });
+
+</script>
+</body>
+</html>

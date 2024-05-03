@@ -158,7 +158,7 @@
 
         .bot-message {
             display: flex;
-            padding: 22px 50px;
+            padding: 27px 50px;
             background-color: #e0e0e0 !important;
             width: 100% !important;
         }
@@ -195,6 +195,26 @@
             outline: none;
         }
 
+        .typing-animation {
+            padding-left: 25px;
+            display: inline-flex;
+        }
+
+        .typing-animation .typing-dot:nth-child(1) {
+            animation: animateDots 1.5s 0.2s ease-in-out infinite;
+        }
+
+        .typing-animation .typing-dot:nth-child(2) {
+            animation: animateDots 1.5s 0.3s ease-in-out infinite;
+        }
+
+        .typing-animation .typing-dot:nth-child(3) {
+            animation: animateDots 1.5s 0.4s ease-in-out infinite;
+        }
+
+        .typing-animation .typing-dot:first-child {
+            margin-left: 0;
+        }
 
         #send-btn {
             background-color: #f0f2f5;
@@ -229,6 +249,13 @@
             background-color: #e1e3e8;
         }
 
+        .typing-dot {
+            background-color: #333; /* Set the color of the dots */
+            width: 8px; /* Adjust width as needed */
+            height: 8px; /* Adjust height as needed */
+            border-radius: 50%; /* Make the dots round */
+        }
+
         /* Add responsiveness */
         @media (max-width: 600px) {
             .chat-application {
@@ -257,94 +284,101 @@
 
     <script>
         $(document).ready(function () {
-            const chatLog = $('.chat-log'); // Corrected selector to target by class
-            const userInput = $('#chat-input');
-            const sendButton = $('#send-btn');
-            const themeButton = $('#theme-btn');
-            const initialHeader = $('.chat-header');
+                const chatLog = $('.chat-log'); // Corrected selector to target by class
+                const userInput = $('#chat-input');
+                const sendButton = $('#send-btn');
+                const themeButton = $('#theme-btn');
+                const initialHeader = $('.chat-header');
 
-            function toggleTheme() {
-                $('body').toggleClass('dark-mode');
-                themeButton.text($('body').hasClass('dark-mode') ? 'light_mode' : 'dark_mode');
-                localStorage.setItem('theme', $('body').hasClass('dark-mode') ? 'dark' : 'light');
-            }
-
-            function loadTheme() {
-                const theme = localStorage.getItem('theme');
-                if (theme === 'dark') {
-                    $('body').addClass('dark-mode');
-                    themeButton.text('light_mode');
-                } else {
-                    $('body').removeClass('dark-mode');
-                    themeButton.text('dark_mode');
+                function toggleTheme() {
+                    $('body').toggleClass('dark-mode');
+                    themeButton.text($('body').hasClass('dark-mode') ? 'light_mode' : 'dark_mode');
+                    localStorage.setItem('theme', $('body').hasClass('dark-mode') ? 'dark' : 'light');
                 }
-            }
 
-            loadTheme();
-            themeButton.click(toggleTheme);
+                function loadTheme() {
+                    const theme = localStorage.getItem('theme');
+                    if (theme === 'dark') {
+                        $('body').addClass('dark-mode');
+                        themeButton.text('light_mode');
+                    } else {
+                        $('body').removeClass('dark-mode');
+                        themeButton.text('dark_mode');
+                    }
+                }
 
-            function hideInitialHeader() {
-                initialHeader.hide();
-            }
+                loadTheme();
+                themeButton.click(toggleTheme);
 
-            function appendMessage(message, sender, emoji) {
-                message = message.replace(/true|false/g, '');
-                const senderClass = sender === 'User' ? 'user-message' : 'bot-message';
-                const emojiHTML = emoji ? `<span class="emoji">${emoji}</span>` : '';
-                const messageDiv = `
-            <div class="${senderClass}">
-                ${emojiHTML}${message}
+                function hideInitialHeader() {
+                    initialHeader.hide();
+                }
+
+                function appendMessage(message, sender, emoji) {
+                    message = message.replace(/true|false/g, '');
+                    const senderClass = sender === 'User' ? 'user-message' : 'bot-message';
+                    const emojiHTML = emoji ? `<span class="emoji">${emoji}</span>` : '';
+                    const botImage = sender === 'Bot' ? '<img src="/static/chatbot.png" alt="chatbot image" style="width: 30px; height: auto; margin-right: 5px;">' : '<img src="/static/user.png" alt="chatbot image" style="width: 30px; height: auto; margin-right: 5px;">';
+                    const messageDiv = `
+        <div class="${senderClass}" style="display: flex; align-items: center; margin-bottom: 10px;">
+            ${botImage}${emojiHTML}<span style="flex-grow: 0;">${message}</span>
+        </div>
+    `;
+                    chatLog.append(messageDiv);
+                    chatLog.scrollTop(chatLog[0].scrollHeight);
+                }
+
+                function showThinkingIndicator() {
+                    const thinkingMessage = `
+        <div class="bot-message thinking-message">
+            <div class="typing-animation">
+                <div class="typing-dot" style="animation-delay: 0.2s"></div>
+                <div class="typing-dot" style="animation-delay: 0.3s"></div>
+                <div class="typing-dot" style="animation-delay: 0.4s"></div>
             </div>
-        `;
-                chatLog.append(messageDiv);
-                chatLog.scrollTop(chatLog[0].scrollHeight);
-            }
+        </div>`;
+                    chatLog.append(thinkingMessage);
+                    chatLog.scrollTop(chatLog[0].scrollHeight);
+                }
 
-            function showThinkingIndicator() {
-                const thinkingMessage = `
-            <div class="bot-message thinking-message">
-                <div class="typing-animation">
-                    <div class="typing-dot" style="--delay: 0.2s"></div>
-                    <div class="typing-dot" style="--delay: 0.3s"></div>
-                    <div class="typing-dot" style="--delay: 0.4s"></div>
-                </div>
-            </div>`;
-                chatLog.append(thinkingMessage);
-                chatLog.scrollTop(chatLog[0].scrollHeight);
-            }
+                function handleUserInput() {
+                    const userMessage = userInput.val();
+                    appendMessage(userMessage, 'User');
+                    userInput.val('');
+                    showThinkingIndicator();
+                    hideInitialHeader();
+                    $.ajax({
+                        url: '/staffs/',
+                        type: 'POST',
+                        data: {question: userMessage, csrfmiddlewaretoken: '{{ csrf_token }}'},
+                        success: function (data) {
+                            const botMessage = data.response;
+                            appendMessage(botMessage, 'Bot');
+                        },
+                        error: function () {
+                            const errorMessage = `
+    <div class="bot-message error-message" style="display: flex; align-items: center; color: red; font-size: 20px; margin: 10px 0;">
+        <img src="/static/chatbot.png" alt="Chatbot Image" style="margin-left 10px;width: 35px; height: auto; margin-right: 10px;">
+        Error processing the request.
+    </div>`;
+                            chatLog.append(errorMessage);
+                        },
+                        complete: function () {
+                            $('.thinking-message').remove();
+                        }
+                    });
+                }
 
-            function handleUserInput() {
-                const userMessage = userInput.val();
-                appendMessage(userMessage, 'User');
-                userInput.val('');
-                showThinkingIndicator();
-                hideInitialHeader();
-                $.ajax({
-                    url: '/staffs/',
-                    type: 'POST',
-                    data: {question: userMessage, csrfmiddlewaretoken: '{{ csrf_token }}'},
-                    success: function (data) {
-                        const botMessage = data.response;
-                        appendMessage(botMessage, 'Bot');
-                    },
-                    error: function () {
-                        const errorMessage = '<div class="bot-message" style="color: red; padding-bottom: 20px; font-size: 20px;">Error processing the request.</div>';
-                        chatLog.append(errorMessage);
-                    },
-                    complete: function () {
-                        $('.thinking-message').remove();
+                userInput.keypress(function (event) {
+                    if (event.which === 13) {
+                        handleUserInput();
                     }
                 });
+
+                sendButton.click(handleUserInput);
             }
-
-            userInput.keypress(function (event) {
-                if (event.which === 13) {
-                    handleUserInput();
-                }
-            });
-
-            sendButton.click(handleUserInput);
-        });
+        )
+        ;
 
 
     </script>

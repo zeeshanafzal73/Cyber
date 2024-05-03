@@ -12,6 +12,5 @@ urlpatterns = [
                   path('forgot_password/', views.forget_password, name='forgot_password'),
                   path('success/', views.success, name='success'),
                   path('home/', views.home, name='home_user'),
-                  path('path/to/logged_in_users_chart/', views.logged_in_users_chart, name='logged_in_users_chart'),
-                  # path('upload/', views.upload_file, name='upload_document'),
+                  path('users_chart/', views.logged_in_users_chart, name='users_chart_login'),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
