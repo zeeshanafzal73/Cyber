@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Pdf_Model
+from .models import Pdf_Model, Questions
 
 # Register your models here.
 admin.site.site_title = "Cyber site admin"
@@ -13,3 +13,8 @@ class Pdf_Admin(admin.ModelAdmin):
 
 
 admin.site.register(Pdf_Model, Pdf_Admin)
+
+
+@admin.register(Questions)
+class ChatQuestion(admin.ModelAdmin):
+    list_display = ('id', 'question', 'created_at')

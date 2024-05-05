@@ -10,3 +10,7 @@ class Pdf_Model(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s PDF"
+
+class Questions(models.Model):
+    question = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)

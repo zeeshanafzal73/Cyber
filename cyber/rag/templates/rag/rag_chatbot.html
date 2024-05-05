@@ -17,13 +17,56 @@
             </div>
 
         </div>
-        <div class="typing-container">
-            <input id="chat-input" type="text" placeholder="Enter a prompt here">
-            <button id="send-btn" class="material-symbols-rounded">send</button>
-            <button id="theme-btn" class="material-symbols-rounded">light_mode</button>
-        </div>
+        <footer>
+            <div class="question">
+                {% for question in random_questions %}
+                    <button class="predefined-question-btn"
+                            data-question="{{ question.question }}">{{ question.question }}
+                    </button>
+                {% endfor %}
+            </div>
+            <div class="typing-container">
+                <input id="chat-input" type="text" placeholder="Enter a prompt here">
+                <button id="send-btn" class="material-symbols-rounded">send</button>
+                <button id="theme-btn" class="material-symbols-rounded">light_mode</button>
+            </div>
+        </footer>
     </div>
     <style>
+
+        .predefined-question-btn {
+            background-color: transparent;
+            color: black;
+            padding: 10px 20px;
+            border: 1px solid black;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px;
+            transition: background-color 0.3s;
+            outline: none;
+
+        }
+
+        footer {
+            position: fixed;
+            margin-top: 168px;
+            width: 100%;
+        }
+
+        .predefined-question-btn:hover {
+            background-color: #41434e;
+            color: white;
+        }
+
+        .question {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            padding: 0 10px;
+            justify-content: center;
+            width: 100%;
+        }
+
         body {
             font-family: 'Poppins', 'Arial', sans-serif;
             background-color: #f0f2f5;
@@ -34,6 +77,25 @@
             align-items: center;
             height: 100vh;
             color: #333;
+            width: 100%;
+        }
+
+        body.dark-mode .predefined-question-btn {
+            background-color: transparent;
+            color: white;
+            padding: 10px 20px;
+            border: 1px solid black;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px;
+            transition: background-color 0.3s;
+            outline: none;
+
+        }
+
+        body.dark-mode .predefined-question-btn:hover {
+            background-color: white;
+            color: #41434e;
         }
 
         body.dark-mode {
@@ -103,20 +165,21 @@
 
         .chat-application {
             width: 100%;
-            border-bottom: 1px solid #e0e0e0;
             text-align: center;
+            height: 100vh;
+            flex-grow: 1;
         }
 
         .chat-header {
-            padding: 20px;
+            padding: 10px;
             text-align: center;
             font-size: 1.2em;
             width: auto;
             margin: 0 auto;
             position: absolute;
             top: 20%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            left: 48%;
+            transform: translate(-40%, -40%);
             z-index: 999;
         }
 
@@ -124,20 +187,16 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start; /* Align messages to start */
-            overflow-y: auto;
-            height: 400px; /* Fixed height with overflow */
-            min-height: 480px;
-
+            min-height: 290px;
+            max-height: 100vh;
         }
 
         .typing-container {
             padding: 10px;
-            background-color: #fff;
             display: flex;
-            border: 2px solid #ccc;
             align-items: center;
-            border-top: 1px solid #e0e0e0;
             justify-content: center;
+
         }
 
         .chat-log {
@@ -258,6 +317,11 @@
 
         /* Add responsiveness */
         @media (max-width: 600px) {
+            .predefined-question-btn {
+                padding: 8px 16px; /* Adjust padding for smaller buttons */
+                margin: 5px; /* Reduce margin for smaller screens */
+            }
+
             .chat-application {
                 padding: 0px;
             }
@@ -273,10 +337,6 @@
             .chat-container {
                 min-height: 300px;
             }
-
-            .user-bubble, .bot-bubble {
-                max-width: 90%;
-            }
         }
 
 
@@ -284,7 +344,7 @@
 
     <script>
         $(document).ready(function () {
-                const chatLog = $('.chat-log'); // Corrected selector to target by class
+                const chatLog = $('.chat-log');
                 const userInput = $('#chat-input');
                 const sendButton = $('#send-btn');
                 const themeButton = $('#theme-btn');
@@ -320,23 +380,23 @@
                     const emojiHTML = emoji ? `<span class="emoji">${emoji}</span>` : '';
                     const botImage = sender === 'Bot' ? '<img src="/static/chatbot.png" alt="chatbot image" style="width: 30px; height: auto; margin-right: 5px;">' : '<img src="/static/user.png" alt="chatbot image" style="width: 30px; height: auto; margin-right: 5px;">';
                     const messageDiv = `
-        <div class="${senderClass}" style="display: flex; align-items: center; margin-bottom: 10px;">
-            ${botImage}${emojiHTML}<span style="flex-grow: 0;">${message}</span>
-        </div>
-    `;
+                    <div class="${senderClass}" style="display: flex; align-items: center; margin-bottom: 10px;">
+                        ${botImage}${emojiHTML}<span style="flex-grow: 0;">${message}</span>
+                    </div>
+                `;
                     chatLog.append(messageDiv);
                     chatLog.scrollTop(chatLog[0].scrollHeight);
                 }
 
                 function showThinkingIndicator() {
                     const thinkingMessage = `
-        <div class="bot-message thinking-message">
-            <div class="typing-animation">
-                <div class="typing-dot" style="animation-delay: 0.2s"></div>
-                <div class="typing-dot" style="animation-delay: 0.3s"></div>
-                <div class="typing-dot" style="animation-delay: 0.4s"></div>
-            </div>
-        </div>`;
+                <div class="bot-message thinking-message">
+                    <div class="typing-animation">
+                        <div class="typing-dot" style="animation-delay: 0.2s"></div>
+                        <div class="typing-dot" style="animation-delay: 0.3s"></div>
+                        <div class="typing-dot" style="animation-delay: 0.4s"></div>
+                    </div>
+                </div>`;
                     chatLog.append(thinkingMessage);
                     chatLog.scrollTop(chatLog[0].scrollHeight);
                 }
@@ -357,10 +417,10 @@
                         },
                         error: function () {
                             const errorMessage = `
-    <div class="bot-message error-message" style="display: flex; align-items: center; color: red; font-size: 20px; margin: 10px 0;">
-        <img src="/static/chatbot.png" alt="Chatbot Image" style="margin-left 10px;width: 35px; height: auto; margin-right: 10px;">
-        Error processing the request.
-    </div>`;
+                        <div class="bot-message error-message" style="display: flex; align-items: center; color: red; font-size: 20px; margin: 10px 0;">
+                            <img src="/static/chatbot.png" alt="Chatbot Image" style="margin-left 10px;width: 35px; height: auto; margin-right: 10px;">
+                            Error processing the request.
+                        </div>`;
                             chatLog.append(errorMessage);
                         },
                         complete: function () {
@@ -369,6 +429,34 @@
                     });
                 }
 
+                // Handling click events for predefined questions
+                $('.predefined-question-btn').click(function () {
+                    const question = $(this).data('question');
+                    appendMessage(question, 'User');  // Append user's question to the chat log
+                    showThinkingIndicator();  // Show thinking indicator
+                    initialHeader.hide();
+                    $('.predefined-question-btn').hide();
+                    $.ajax({
+                        url: '/staffs/',
+                        type: 'POST',
+                        data: {question: question, csrfmiddlewaretoken: '{{ csrf_token }}'},
+                        success: function (data) {
+                            const botMessage = data.response;
+                            appendMessage(botMessage, 'Bot');  // Append bot's response to the chat log
+                        },
+                        error: function () {
+                            const errorMessage = `
+                        <div class="bot-message error-message" style="display: flex; align-items: center; color: red; font-size: 20px; margin: 10px 0;">
+                            <img src="/static/chatbot.png" alt="Chatbot Image" style="margin-left 10px;width: 35px; height: auto; margin-right: 10px;">
+                            Error processing the request.
+                        </div>`;
+                            chatLog.append(errorMessage);
+                        },
+                        complete: function () {
+                            $('.thinking-message').remove();  // Remove thinking indicator
+                        }
+                    });
+                });
                 userInput.keypress(function (event) {
                     if (event.which === 13) {
                         handleUserInput();

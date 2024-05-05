@@ -11,7 +11,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
 
-from .models import Pdf_Model
+from .models import Pdf_Model, Questions
 
 OPENAI_API_KEY = ""
 
@@ -114,8 +114,11 @@ def staff_chatbot(request):
             else:
                 response = "No matching found."
         return JsonResponse({'response': response, 'chat_history': chat_history})
-
-    return render(request, 'rag/rag_chatbot.html')
+    random_questions = Questions.objects.order_by('?')[:4]
+    context = {
+        'random_questions': random_questions
+    }
+    return render(request, 'rag/rag_chatbot.html', context=context)
 
 
 def chatbot_response(request):
